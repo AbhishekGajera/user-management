@@ -1,0 +1,126 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User List</title>
+  <link rel="stylesheet" type="text/css" href="/styles.css">
+
+  <style>
+    /* Add your custom styles here */
+  </style>
+</head>
+<body>
+  <h1>User List</h1>
+
+  <div>
+    <input type="text" id="searchInput" placeholder="Search by name or email">
+    <button onclick="searchUsers()">Search</button>
+  </div>
+
+  <table id="userTable">
+    <thead>
+      <tr>
+        <th onclick="sortTable('id')">ID</th>
+        <th onclick="sortTable('name')">Name</th>
+        <th onclick="sortTable('email')">Email</th>
+        <th>Gender</th>
+        <th>Phone</th>
+        <th onclick="sortTable('date')">Date</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% users.forEach(function(user) { %>
+        <tr>
+          <td><%= user.id %></td>
+          <td><%= user.name %></td>
+          <td><%= user.email %></td>
+          <td><%= user.gender %></td>
+          <td><%= user.phone %></td>
+          <td>
+            <% if (typeof formatDate === 'function') { %>
+              <%= formatDate(user.date) %>
+            <% } else { %>
+              <%= user.date %>
+            <% } %>
+          </td>
+                    <td>
+            <select onchange="updateStatus('<%= user.id %>', this.value)">
+              <option value="pending" <%= user.status === 'pending' ? 'selected' : '' %>>Pending</option>
+              <option value="active" <%= user.status === 'active' ? 'selected' : '' %>>Active</option>
+              <option value="de-active" <%= user.status === 'de-active' ? 'selected' : '' %>>De-active</option>
+            </select>
+          </td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+
+  <div>
+    <% if (paginationInfo.currentPage > 1) { %>
+      <a href="/users?page=<%= paginationInfo.currentPage - 1 %>&search=<%= searchValue %>&sort=<%= sortColumn %>&direction=<%= sortDirection %>">Previous</a>
+    <% } %>
+
+    <% for (let i = 1; i <= paginationInfo.totalPages; i++) { %>
+      <% if (i === paginationInfo.currentPage) { %>
+        <span><%= i %></span>
+      <% } else { %>
+        <a href="/users?page=<%= i %>&search=<%= searchValue %>&sort=<%= sortColumn %>&direction=<%= sortDirection %>"><%= i %></a>
+      <% } %>
+    <% } %>
+
+    <% if (paginationInfo.currentPage < paginationInfo.totalPages) { %>
+      <a href="/users?page=<%= paginationInfo.currentPage + 1 %>&search=<%= searchValue %>&sort=<%= sortColumn %>&direction=<%= sortDirection %>">Next</a>
+    <% } %>
+  </div>
+
+  <button onclick="downloadCSV()">Download as CSV</button>
+
+  <script>
+    function formatDate(date) {
+      const options = { day: '2-digit', month: 'short', year: 'numeric' };
+      const formattedDate = new Date(date).toLocaleDateString('en-US', options);
+      return formattedDate;
+    }
+
+    function searchUsers() {
+      const searchInput = document.getElementById('searchInput');
+      const searchValue = searchInput.value.trim();
+      const url = '/users?search=' + encodeURIComponent(searchValue);
+      window.location.href = url;
+    }
+
+    function updateStatus(userId, status) {
+      fetch('/users/update-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, status })
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            console.log('Status updated successfully');
+          } else {
+            console.error('Failed to update status');
+          }
+        })
+        .catch(error => {
+          console.error('Error updating status:', error);
+        });
+    }
+
+    function sortTable(column) {
+      const url = '/users?sort=' + column;
+      window.location.href = url;
+    }
+
+    function downloadCSV() {
+      const searchValue = '<%= searchValue %>';
+      const sortColumn = '<%= sortColumn %>';
+      const sortDirection = '<%= sortDirection %>';
+      const url = '/users/download-csv?search=' + encodeURIComponent(searchValue) + '&sort=' + sortColumn + '&direction=' + sortDirection;
+      window.location.href = url;
+    }
+  </script>
+</body>
+</html>
