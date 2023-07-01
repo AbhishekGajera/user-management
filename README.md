@@ -9,7 +9,6 @@ The client side code is developed using React.js. To run the client side code, f
 1. Open a terminal and navigate to the `client` folder:
 
 ```cd client```
-cd client
 
 ```npm i```
 
