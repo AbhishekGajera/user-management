@@ -121,7 +121,15 @@ exports.userList = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching users:", error);
-    res.sendStatus(500);
+    const paginationInfo = { currentPage: 1, totalPages: 0 };
+
+    res.render("users", {
+      users: [],
+      paginationInfo,
+      searchValue: "",
+      sortColumn: "name",
+      sortDirection: "asc",
+    });
   }
 };
 
