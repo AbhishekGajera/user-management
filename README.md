@@ -35,6 +35,16 @@ Before running the project, ensure that you have the following prerequisites ins
 - MySQL
 - Node.js version 14+
 
+## Environment Setup
+
+For proper configuration of the project, consider the following:
+
+- Client Side: 
+- The base URL of the API in the client is set to `http://localhost:8000`. Update it if your server is running on a different URL.
+
+- Server Side: 
+- Change the MySQL database credentials in the server as per your local setup.
+
 ## Accessing the Application
 
 - To view the frontend, visit [http://localhost:3000](http://localhost:3000).
@@ -42,4 +52,4 @@ Before running the project, ensure that you have the following prerequisites ins
 
 ## Viewing List of Users
 
-To view the list of users, navigate to [https://localhost:8000/users](https://localhost:8000/users). This page provides a static list of all users and allows you to search, sort, paginate, and change the status of users.
+To view the list of users, navigate to [http://localhost:8000/users](http://localhost:8000/users). This page provides a static list of all users and allows you to search, sort, paginate, and change the status of users.
